@@ -1,6 +1,11 @@
 # "Gsw" as in "G swilmet" or "G software", as a namespace.
 
 
+macro (GswInitBasic)
+  find_package (PkgConfig)
+  include (GNUInstallDirs)
+endmacro ()
+
 # Try to mimic the AX_COMPILER_FLAGS Autotools macro.
 #
 # For the rationale (having such a long list of flags instead of just relying on
@@ -68,7 +73,8 @@ function (GswAddExecutable pkg_dep executable_name sources)
   add_executable ("${executable_name}" ${sources})
   target_link_libraries ("${executable_name}" ${${pkg_dep}_LDFLAGS})
 
-  install (TARGETS "${executable_name}")
+  install (TARGETS "${executable_name}"
+    DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endfunction ()
 
 # Useful for printing a configuration summary.

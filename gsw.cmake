@@ -70,3 +70,12 @@ function (GswAddExecutable pkg_dep executable_name sources)
 
   install (TARGETS "${executable_name}")
 endfunction ()
+
+# Useful for printing a configuration summary.
+function (GswYesOrNo condition result)
+  if (${condition})
+    set (${result} yes PARENT_SCOPE)
+  else ()
+    set (${result} no PARENT_SCOPE)
+  endif ()
+endfunction ()

@@ -67,4 +67,6 @@ function (GswAddExecutable pkg_dep executable_name sources)
   add_compile_options (${${pkg_dep}_CFLAGS_OTHER})
   add_executable ("${executable_name}" ${sources})
   target_link_libraries ("${executable_name}" ${${pkg_dep}_LDFLAGS})
+
+  install (TARGETS "${executable_name}")
 endfunction ()

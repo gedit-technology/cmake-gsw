@@ -77,6 +77,17 @@ function (GswAddExecutable pkg_dep executable_name sources)
     DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endfunction ()
 
+# When pkg-config is used.
+function (GswAddLibrary pkg_dep library_name sources)
+  include_directories (${${pkg_dep}_INCLUDE_DIRS})
+  add_compile_options (${${pkg_dep}_CFLAGS_OTHER})
+  add_library ("${library_name}" SHARED ${sources})
+  target_link_libraries ("${library_name}" ${${pkg_dep}_LDFLAGS})
+
+  install (TARGETS "${library_name}"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+endfunction ()
+
 # Useful for printing a configuration summary.
 function (GswYesOrNo condition result)
   if (${condition})

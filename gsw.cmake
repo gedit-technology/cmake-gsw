@@ -4,6 +4,7 @@
 macro (GswInitBasic)
   find_package (PkgConfig)
   include (GNUInstallDirs)
+  set (CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 endmacro ()
 
 # Try to mimic the AX_COMPILER_FLAGS Autotools macro.

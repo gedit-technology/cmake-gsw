@@ -20,8 +20,8 @@ endmacro ()
 # modify the code to suppress the warning. Some of them are enabled by -Wextra
 # but many of them must be enabled individually.
 # """
-function (GswCompilerFlags)
-  add_compile_options (
+function (GswCompilerFlags target_name)
+  target_compile_options ("${target_name}" PRIVATE
     "-Wall"
     "-Wextra"
     "-fno-strict-aliasing"

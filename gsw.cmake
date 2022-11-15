@@ -76,6 +76,8 @@ function (GswAddExecutable pkg_dep executable_name sources)
   target_compile_options ("${executable_name}" PRIVATE ${${pkg_dep}_CFLAGS_OTHER})
   target_link_libraries ("${executable_name}" ${${pkg_dep}_LDFLAGS})
 
+  GswCompilerFlags ("${executable_name}")
+
   install (TARGETS "${executable_name}"
     DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endfunction ()

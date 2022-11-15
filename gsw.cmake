@@ -69,9 +69,11 @@ endfunction ()
 
 # When pkg-config is used.
 function (GswAddExecutable pkg_dep executable_name sources)
-  include_directories (${${pkg_dep}_INCLUDE_DIRS})
-  add_compile_options (${${pkg_dep}_CFLAGS_OTHER})
   add_executable ("${executable_name}" ${sources})
+
+  # Apply the pkg-config dependencies informations to the target.
+  target_include_directories ("${executable_name}" PRIVATE ${${pkg_dep}_INCLUDE_DIRS})
+  target_compile_options ("${executable_name}" PRIVATE ${${pkg_dep}_CFLAGS_OTHER})
   target_link_libraries ("${executable_name}" ${${pkg_dep}_LDFLAGS})
 
   install (TARGETS "${executable_name}"

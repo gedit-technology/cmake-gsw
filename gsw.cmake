@@ -2,7 +2,7 @@
 
 
 macro (GswInitBasic)
-  find_package (PkgConfig)
+  find_package (PkgConfig REQUIRED)
   include (GNUInstallDirs)
   set (CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 endmacro ()

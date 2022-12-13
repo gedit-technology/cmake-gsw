@@ -2,8 +2,8 @@
 
 # Gsw variables:
 # - GSW_APPLY_DEFAULT (boolean): execute additional things.
-# - GSW_LIB_LONG_NAME_LOWERCASE: e.g., libfoo
-# - GSW_LIB_SHORT_NAME_LOWERCASE: e.g., foo
+# - GSW_LIB_NAME: e.g., libfoo-3
+# - GSW_LIB_NAME_WITHOUT_LIB_PREFIX: e.g., foo-3
 # - GSW_LIB_SHORT_NAME_UPPERCASE: e.g., FOO
 # - GSW_EXECUTABLE_SOURCES: list of source files, for simple executables.
 # - GSW_PKG_CONFIG_DEPS: the PREFIX used for a simple pkg_check_modules() call.
@@ -131,9 +131,9 @@ endfunction ()
 function (GswAddPkgConfigFile)
   configure_file (
     "${PROJECT_SOURCE_DIR}/cmake/pkg-config-template.pc.in"
-    "${PROJECT_BINARY_DIR}/${GSW_LIB_LONG_NAME_LOWERCASE}.pc"
+    "${PROJECT_BINARY_DIR}/${GSW_LIB_NAME}.pc"
     @ONLY)
-  install (FILES "${PROJECT_BINARY_DIR}/${GSW_LIB_LONG_NAME_LOWERCASE}.pc"
+  install (FILES "${PROJECT_BINARY_DIR}/${GSW_LIB_NAME}.pc"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 endfunction ()
 

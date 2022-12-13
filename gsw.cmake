@@ -137,6 +137,45 @@ function (GswAddPkgConfigFile)
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 endfunction ()
 
+function (GswPkgConfigRegisterExposedDep name comparison_operator version)
+  # "For file" means: for creating the *.pc file.
+  # "For check" means: for pkg_check_modules().
+
+  if ("${comparison_operator}" STREQUAL "")
+    set (base_for_file "${name}")
+    set (base_for_check "${name}")
+  else ()
+    # With spaces:
+    set (base_for_file "${name} ${comparison_operator} ${version}")
+
+    # Without spaces:
+    set (base_for_check "${name}${comparison_operator}${version}")
+  endif ()
+
+  # Comma-separated list.
+  if (NOT DEFINED GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE)
+    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE
+      "${base_for_file}"
+      PARENT_SCOPE)
+  else ()
+    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE
+      "${GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE}, ${base_for_file}"
+      PARENT_SCOPE)
+  endif ()
+
+  # Semi-colon-separated list, to use as an unquoted arg to expand it to several
+  # args.
+  if (NOT DEFINED GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK)
+    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK
+      "${base_for_check}"
+      PARENT_SCOPE)
+  else ()
+    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK
+      "${GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK};${base_for_check}"
+      PARENT_SCOPE)
+  endif ()
+endfunction ()
+
 # Useful for printing a configuration summary.
 function (GswYesOrNo condition result)
   if (${condition})

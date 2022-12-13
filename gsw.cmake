@@ -118,6 +118,15 @@ function (GswAddLibrary library_name sources pkg_dep)
     DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 endfunction ()
 
+function (GswAddPkgConfigFile)
+  configure_file (
+    "${PROJECT_SOURCE_DIR}/cmake/pkg-config-template.pc.in"
+    "${PROJECT_BINARY_DIR}/${GSW_LIB_LONG_NAME_LOWERCASE}.pc"
+    @ONLY)
+  install (FILES "${PROJECT_BINARY_DIR}/${GSW_LIB_LONG_NAME_LOWERCASE}.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+endfunction ()
+
 # Useful for printing a configuration summary.
 function (GswYesOrNo condition result)
   if (${condition})

@@ -1,7 +1,6 @@
 # "Gsw" as in "G swilmet" or "G software", as a namespace.
 
 # Some Gsw variables:
-# - GSW_APPLY_DEFAULT (boolean): execute additional things.
 # - GSW_LIB_NAME: e.g., libfoo-3
 # - GSW_LIB_NAME_WITHOUT_LIB_PREFIX: e.g., foo-3
 # - GSW_NAMESPACE: e.g., Foo
@@ -15,7 +14,6 @@ macro (GswInit)
   find_package (PkgConfig REQUIRED)
   include (GNUInstallDirs)
   set (CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
-  set (GSW_APPLY_DEFAULT TRUE)
 endmacro ()
 
 # Try to mimic the AX_COMPILER_FLAGS Autotools macro.
@@ -101,10 +99,7 @@ function (GswAddExecutable executable_name sources pkg_dep)
 
   GswApplyPkgConfigDepsToTarget ("${executable_name}" "${pkg_dep}")
   GswCompilerFlags ("${executable_name}")
-
-  if ("${GSW_APPLY_DEFAULT}")
-    GswDefineGLogDomain ("${executable_name}")
-  endif ()
+  GswDefineGLogDomain ("${executable_name}")
 
   install (TARGETS "${executable_name}"
     DESTINATION "${CMAKE_INSTALL_BINDIR}")
@@ -121,10 +116,7 @@ function (GswAddLibrary library_name sources pkg_dep)
 
   GswApplyPkgConfigDepsToTarget ("${library_name}" "${pkg_dep}")
   GswCompilerFlags ("${library_name}")
-
-  if ("${GSW_APPLY_DEFAULT}")
-    GswDefineGLogDomain ("${library_name}")
-  endif ()
+  GswDefineGLogDomain ("${library_name}")
 
   install (TARGETS "${library_name}"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}")

@@ -98,6 +98,12 @@ function (GswAddExecutable executable_name sources pkg_dep)
     DESTINATION "${CMAKE_INSTALL_BINDIR}")
 endfunction ()
 
+function (GswAddExecutableSimple)
+  GswAddExecutable ("${PROJECT_NAME}"
+    "${GSW_EXECUTABLE_SOURCES}"
+    GSW_PKG_CONFIG_DEPS)
+endfunction ()
+
 function (GswAddLibrary library_name sources pkg_dep)
   add_library ("${library_name}" SHARED ${sources})
 

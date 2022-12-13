@@ -1,5 +1,15 @@
 # "Gsw" as in "G swilmet" or "G software", as a namespace.
 
+# Gsw variables:
+# - GSW_APPLY_DEFAULT (boolean): execute additional things.
+# - GSW_LIB_LONG_NAME_LOWERCASE: e.g., libfoo
+# - GSW_LIB_SHORT_NAME_LOWERCASE: e.g., foo
+# - GSW_LIB_SHORT_NAME_UPPERCASE: e.g., FOO
+# - GSW_EXECUTABLE_SOURCES: list of source files, for simple executables.
+# - GSW_PKG_CONFIG_DEPS: the PREFIX used for a simple pkg_check_modules() call.
+# - GSW_PROJECT_DESCRIPTION: a short description.
+# - GSW_PKG_CONFIG_EXPOSED_DEPS: for creating a pkg-config file.
+# - GSW_PKG_CONFIG_PRIVATE_DEPS: for creating a pkg-config file.
 
 macro (GswInit)
   find_package (PkgConfig REQUIRED)
@@ -81,7 +91,7 @@ endfunction ()
 
 function (GswLibraryEnsureSingleHeaderExternalInclude library_name)
   target_compile_definitions ("${library_name}"
-    PRIVATE "-D${GSW_LIB_NAME_UPPERCASE}_COMPILATION")
+    PRIVATE "-D${GSW_LIB_SHORT_NAME_UPPERCASE}_COMPILATION")
 endfunction ()
 
 function (GswAddExecutable executable_name sources pkg_dep)

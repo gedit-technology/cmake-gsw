@@ -73,11 +73,25 @@ function (GswApplyPkgConfigDepsToTarget target_name pkg_dep)
   target_link_libraries ("${target_name}" ${${pkg_dep}_LDFLAGS})
 endfunction ()
 
+function (GswDefineGLogDomain target_name)
+  target_compile_definitions ("${target_name}"
+    PRIVATE "-DG_LOG_DOMAIN=\"${PROJECT_NAME}\"")
+endfunction ()
+
+function (GswLibraryEnsureSingleHeaderExternalInclude library_name)
+  target_compile_definitions ("${library_name}"
+    PRIVATE "-D${GSW_LIB_NAME_UPPERCASE}_COMPILATION")
+endfunction ()
+
 function (GswAddExecutable executable_name sources pkg_dep)
   add_executable ("${executable_name}" ${sources})
 
   GswApplyPkgConfigDepsToTarget ("${executable_name}" "${pkg_dep}")
   GswCompilerFlags ("${executable_name}")
+
+  if ("${GSW_APPLY_DEFAULT}")
+    GswDefineGLogDomain ("${executable_name}")
+  endif ()
 
   install (TARGETS "${executable_name}"
     DESTINATION "${CMAKE_INSTALL_BINDIR}")
@@ -89,18 +103,12 @@ function (GswAddLibrary library_name sources pkg_dep)
   GswApplyPkgConfigDepsToTarget ("${library_name}" "${pkg_dep}")
   GswCompilerFlags ("${library_name}")
 
+  if ("${GSW_APPLY_DEFAULT}")
+    GswDefineGLogDomain ("${library_name}")
+  endif ()
+
   install (TARGETS "${library_name}"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-endfunction ()
-
-function (GswDefineGLogDomain target_name)
-  target_compile_definitions ("${target_name}"
-    PRIVATE "-DG_LOG_DOMAIN=\"${PROJECT_NAME}\"")
-endfunction ()
-
-function (GswLibraryEnsureSingleHeaderExternalInclude library_name)
-  target_compile_definitions ("${library_name}"
-    PRIVATE "-D${GSW_LIB_NAME_UPPERCASE}_COMPILATION")
 endfunction ()
 
 # Useful for printing a configuration summary.

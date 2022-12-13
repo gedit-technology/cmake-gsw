@@ -1,10 +1,11 @@
 # "Gsw" as in "G swilmet" or "G software", as a namespace.
 
 
-macro (GswInitBasic)
+macro (GswInit)
   find_package (PkgConfig REQUIRED)
   include (GNUInstallDirs)
   set (CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+  set (GSW_APPLY_DEFAULT TRUE)
 endmacro ()
 
 # Try to mimic the AX_COMPILER_FLAGS Autotools macro.

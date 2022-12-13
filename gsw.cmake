@@ -93,6 +93,16 @@ function (GswAddLibrary library_name sources pkg_dep)
     DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 endfunction ()
 
+function (GswDefineGLogDomain target_name)
+  target_compile_definitions ("${target_name}"
+    PRIVATE "-DG_LOG_DOMAIN=\"${PROJECT_NAME}\"")
+endfunction ()
+
+function (GswLibraryEnsureSingleHeaderExternalInclude library_name)
+  target_compile_definitions ("${library_name}"
+    PRIVATE "-D${GSW_LIB_NAME_UPPERCASE}_COMPILATION")
+endfunction ()
+
 # Useful for printing a configuration summary.
 function (GswYesOrNo condition result)
   if (${condition})

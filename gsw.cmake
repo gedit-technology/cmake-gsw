@@ -81,16 +81,6 @@ function (GswGetAbsolutePaths files_list output_list)
   set (${output_list} "${absolute_files_list}" PARENT_SCOPE)
 endfunction ()
 
-function (GswRegisterGeneratedPublicHeaders generated_public_headers)
-  set (GSW_GENERATED_PUBLIC_HEADERS
-    ${GSW_GENERATED_PUBLIC_HEADERS} ${generated_public_headers} PARENT_SCOPE)
-endfunction ()
-
-function (GswRegisterGeneratedPublicCFiles generated_public_c_files)
-  set (GSW_GENERATED_PUBLIC_C_FILES
-    ${GSW_GENERATED_PUBLIC_C_FILES} ${generated_public_c_files} PARENT_SCOPE)
-endfunction ()
-
 function (GswFindGlibMkenumsProgram result)
   pkg_get_variable (my_result glib-2.0 glib_mkenums)
 
@@ -131,10 +121,13 @@ function (GswGlibMkenumsPublic public_headers)
       "${absolute_paths_to_public_headers}")
   endforeach ()
 
-  GswRegisterGeneratedPublicHeaders ("${output_dir}/${output_header}")
-  GswRegisterGeneratedPublicCFiles ("${output_dir}/${output_c_file}")
-  set (GSW_GENERATED_PUBLIC_HEADERS "${GSW_GENERATED_PUBLIC_HEADERS}" PARENT_SCOPE)
-  set (GSW_GENERATED_PUBLIC_C_FILES "${GSW_GENERATED_PUBLIC_C_FILES}" PARENT_SCOPE)
+  set (GSW_GENERATED_PUBLIC_HEADERS
+    ${GSW_GENERATED_PUBLIC_HEADERS} "${output_dir}/${output_header}"
+    PARENT_SCOPE)
+
+  set (GSW_GENERATED_PUBLIC_C_FILES
+    ${GSW_GENERATED_PUBLIC_C_FILES} "${output_dir}/${output_c_file}"
+    PARENT_SCOPE)
 endfunction ()
 
 # Try to mimic the AX_COMPILER_FLAGS Autotools macro.

@@ -165,6 +165,16 @@ function (GswPkgConfigRegisterExposedDep name comparison_operator version)
   endif ()
 endfunction ()
 
+function (GswFindGlibMkenumsProgram result)
+  pkg_get_variable (my_result glib-2.0 glib_mkenums)
+
+  if ("${my_result}" STREQUAL "")
+    message (FATAL_ERROR "glib-mkenums program not found.")
+  endif ()
+
+  set (${result} "${my_result}" PARENT_SCOPE)
+endfunction ()
+
 # Useful for printing a configuration summary.
 function (GswYesOrNo condition result)
   if (${condition})

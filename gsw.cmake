@@ -130,6 +130,12 @@ function (GswGlibMkenumsPublic public_headers)
     PARENT_SCOPE)
 endfunction ()
 
+function (GswInstallAllPublicHeaders public_headers)
+  string (TOLOWER "${GSW_NAMESPACE}" lowercase_namespace)
+  install (FILES ${public_headers} ${GSW_GENERATED_PUBLIC_HEADERS}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${GSW_LIB_NAME}/${lowercase_namespace}")
+endfunction ()
+
 # Try to mimic the AX_COMPILER_FLAGS Autotools macro.
 #
 # For the rationale (having such a long list of flags instead of just relying on

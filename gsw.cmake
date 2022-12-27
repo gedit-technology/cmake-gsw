@@ -11,6 +11,60 @@ macro (GswInit)
   set (CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 endmacro ()
 
+function (GswRegisterExposedDep name comparison_operator version)
+  # "For file" means: for creating the *.pc file.
+  # "For check" means: for pkg_check_modules().
+
+  if ("${comparison_operator}" STREQUAL "")
+    set (base_for_file "${name}")
+    set (base_for_check "${name}")
+  else ()
+    # With spaces:
+    set (base_for_file "${name} ${comparison_operator} ${version}")
+
+    # Without spaces:
+    set (base_for_check "${name}${comparison_operator}${version}")
+  endif ()
+
+  # Comma-separated list.
+  if (NOT DEFINED GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE)
+    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE
+      "${base_for_file}"
+      PARENT_SCOPE)
+  else ()
+    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE
+      "${GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE}, ${base_for_file}"
+      PARENT_SCOPE)
+  endif ()
+
+  # Semi-colon-separated list, to use as an unquoted arg to expand it to several
+  # args.
+  if (NOT DEFINED GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK)
+    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK
+      "${base_for_check}"
+      PARENT_SCOPE)
+  else ()
+    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK
+      "${GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK};${base_for_check}"
+      PARENT_SCOPE)
+  endif ()
+endfunction ()
+
+function (GswAddPkgConfigFile library_short_description)
+  set (GSW_LIB_SHORT_DESCRIPTION "${library_short_description}")
+  configure_file (
+    "${PROJECT_SOURCE_DIR}/cmake/pkg-config-template.pc.in"
+    "${PROJECT_BINARY_DIR}/${GSW_LIB_NAME}.pc"
+    @ONLY)
+  install (FILES "${PROJECT_BINARY_DIR}/${GSW_LIB_NAME}.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+endfunction ()
+
+function (GswPkgConfigStandardSetupForLibrary library_short_description)
+  pkg_check_modules (GSW_PKG_CONFIG_DEPS REQUIRED ${GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK})
+  GswAddPkgConfigFile ("${library_short_description}")
+endfunction ()
+
 # Try to mimic the AX_COMPILER_FLAGS Autotools macro.
 #
 # For the rationale (having such a long list of flags instead of just relying on
@@ -115,54 +169,6 @@ function (GswAddLibrary library_name sources pkg_dep)
 
   install (TARGETS "${library_name}"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-endfunction ()
-
-function (GswAddPkgConfigFile)
-  configure_file (
-    "${PROJECT_SOURCE_DIR}/cmake/pkg-config-template.pc.in"
-    "${PROJECT_BINARY_DIR}/${GSW_LIB_NAME}.pc"
-    @ONLY)
-  install (FILES "${PROJECT_BINARY_DIR}/${GSW_LIB_NAME}.pc"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
-endfunction ()
-
-function (GswPkgConfigRegisterExposedDep name comparison_operator version)
-  # "For file" means: for creating the *.pc file.
-  # "For check" means: for pkg_check_modules().
-
-  if ("${comparison_operator}" STREQUAL "")
-    set (base_for_file "${name}")
-    set (base_for_check "${name}")
-  else ()
-    # With spaces:
-    set (base_for_file "${name} ${comparison_operator} ${version}")
-
-    # Without spaces:
-    set (base_for_check "${name}${comparison_operator}${version}")
-  endif ()
-
-  # Comma-separated list.
-  if (NOT DEFINED GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE)
-    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE
-      "${base_for_file}"
-      PARENT_SCOPE)
-  else ()
-    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE
-      "${GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE}, ${base_for_file}"
-      PARENT_SCOPE)
-  endif ()
-
-  # Semi-colon-separated list, to use as an unquoted arg to expand it to several
-  # args.
-  if (NOT DEFINED GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK)
-    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK
-      "${base_for_check}"
-      PARENT_SCOPE)
-  else ()
-    set (GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK
-      "${GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_CHECK};${base_for_check}"
-      PARENT_SCOPE)
-  endif ()
 endfunction ()
 
 function (GswGetAbsolutePaths files_list output_list)

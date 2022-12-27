@@ -72,6 +72,71 @@ function (GswConfigFileStandardSetup)
     "${PROJECT_BINARY_DIR}/config-h/${lowercase_namespace}-config.h")
 endfunction ()
 
+function (GswGetAbsolutePaths files_list output_list)
+  foreach (file ${files_list})
+    set (absolute_file "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
+    list (APPEND absolute_files_list "${absolute_file}")
+  endforeach ()
+
+  set (${output_list} "${absolute_files_list}" PARENT_SCOPE)
+endfunction ()
+
+function (GswRegisterGeneratedPublicHeaders generated_public_headers)
+  set (GSW_GENERATED_PUBLIC_HEADERS
+    ${GSW_GENERATED_PUBLIC_HEADERS} ${generated_public_headers} PARENT_SCOPE)
+endfunction ()
+
+function (GswRegisterGeneratedPublicCFiles generated_public_c_files)
+  set (GSW_GENERATED_PUBLIC_C_FILES
+    ${GSW_GENERATED_PUBLIC_C_FILES} ${generated_public_c_files} PARENT_SCOPE)
+endfunction ()
+
+function (GswFindGlibMkenumsProgram result)
+  pkg_get_variable (my_result glib-2.0 glib_mkenums)
+
+  if ("${my_result}" STREQUAL "")
+    message (FATAL_ERROR "glib-mkenums program not found.")
+  endif ()
+
+  set (${result} "${my_result}" PARENT_SCOPE)
+endfunction ()
+
+function (GswAddGlibMkenumsCommand glib_mkenums_executable
+  template output_dir output_filename absolute_paths_to_headers)
+  set (output "${output_dir}/${output_filename}")
+
+  add_custom_command (OUTPUT "${output}"
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E make_directory "${output_dir}"
+    COMMAND "${glib_mkenums_executable}"
+    ARGS --template "${template}" --output "${output}" ${absolute_paths_to_headers}
+    DEPENDS "${glib_mkenums_executable}" "${template}" ${absolute_paths_to_headers}
+    COMMENT "Generating ${output_filename}")
+endfunction ()
+
+function (GswGlibMkenumsPublic public_headers)
+  GswFindGlibMkenumsProgram (glib_mkenums_executable)
+  GswGetAbsolutePaths ("${public_headers}" absolute_paths_to_public_headers)
+  string (TOLOWER "${GSW_NAMESPACE}" lowercase_namespace)
+  set (output_dir "${PROJECT_BINARY_DIR}/glib-mkenums/${lowercase_namespace}")
+  set (output_header "${lowercase_namespace}-enum-types.h")
+  set (output_c_file "${lowercase_namespace}-enum-types.c")
+
+  foreach (output_filename "${output_header}" "${output_c_file}")
+    set (template "${PROJECT_SOURCE_DIR}/${lowercase_namespace}/${output_filename}.in")
+    GswAddGlibMkenumsCommand ("${glib_mkenums_executable}"
+      "${template}"
+      "${output_dir}"
+      "${output_filename}"
+      "${absolute_paths_to_public_headers}")
+  endforeach ()
+
+  GswRegisterGeneratedPublicHeaders ("${output_dir}/${output_header}")
+  GswRegisterGeneratedPublicCFiles ("${output_dir}/${output_c_file}")
+  set (GSW_GENERATED_PUBLIC_HEADERS "${GSW_GENERATED_PUBLIC_HEADERS}" PARENT_SCOPE)
+  set (GSW_GENERATED_PUBLIC_C_FILES "${GSW_GENERATED_PUBLIC_C_FILES}" PARENT_SCOPE)
+endfunction ()
+
 # Try to mimic the AX_COMPILER_FLAGS Autotools macro.
 #
 # For the rationale (having such a long list of flags instead of just relying on
@@ -176,55 +241,6 @@ function (GswAddLibrary library_name sources pkg_dep)
 
   install (TARGETS "${library_name}"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-endfunction ()
-
-function (GswGetAbsolutePaths files_list output_list)
-  foreach (file ${files_list})
-    set (absolute_file "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
-    list (APPEND absolute_files_list "${absolute_file}")
-  endforeach ()
-
-  set (${output_list} "${absolute_files_list}" PARENT_SCOPE)
-endfunction ()
-
-function (GswFindGlibMkenumsProgram result)
-  pkg_get_variable (my_result glib-2.0 glib_mkenums)
-
-  if ("${my_result}" STREQUAL "")
-    message (FATAL_ERROR "glib-mkenums program not found.")
-  endif ()
-
-  set (${result} "${my_result}" PARENT_SCOPE)
-endfunction ()
-
-function (GswAddGlibMkenumsCommandInternal glib_mkenums_executable
-  template output_dir output_filename absolute_paths_to_headers)
-  set (output "${output_dir}/${output_filename}")
-
-  add_custom_command (OUTPUT "${output}"
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E make_directory "${output_dir}"
-    COMMAND "${glib_mkenums_executable}"
-    ARGS --template "${template}" --output "${output}" ${absolute_paths_to_headers}
-    DEPENDS "${glib_mkenums_executable}" "${template}" ${absolute_paths_to_headers}
-    COMMENT "Generating ${output_filename}")
-endfunction ()
-
-function (GswAddGlibMkenumsCommand absolute_paths_to_public_headers)
-  GswFindGlibMkenumsProgram (glib_mkenums_executable)
-  string (TOLOWER "${GSW_NAMESPACE}" lowercase_namespace)
-  set (output_dir "${PROJECT_BINARY_DIR}/glib-mkenums/${lowercase_namespace}")
-
-  foreach (output_filename
-    "${lowercase_namespace}-enum-types.h"
-    "${lowercase_namespace}-enum-types.c")
-    set (template "${PROJECT_SOURCE_DIR}/${lowercase_namespace}/${output_filename}.in")
-    GswAddGlibMkenumsCommandInternal ("${glib_mkenums_executable}"
-      "${template}"
-      "${output_dir}"
-      "${output_filename}"
-      "${absolute_paths_to_public_headers}")
-  endforeach ()
 endfunction ()
 
 # Useful for printing a configuration summary.

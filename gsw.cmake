@@ -165,6 +165,15 @@ function (GswPkgConfigRegisterExposedDep name comparison_operator version)
   endif ()
 endfunction ()
 
+function (GswGetAbsolutePaths files_list output_list)
+  foreach (file ${files_list})
+    set (absolute_file "${CMAKE_CURRENT_SOURCE_DIR}/${file}")
+    list (APPEND absolute_files_list "${absolute_file}")
+  endforeach ()
+
+  set (${output_list} "${absolute_files_list}" PARENT_SCOPE)
+endfunction ()
+
 function (GswFindGlibMkenumsProgram result)
   pkg_get_variable (my_result glib-2.0 glib_mkenums)
 

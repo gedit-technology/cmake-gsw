@@ -65,6 +65,13 @@ function (GswPkgConfigStandardSetupForLibrary library_short_description)
   GswAddPkgConfigFile ("${library_short_description}")
 endfunction ()
 
+function (GswConfigFileStandardSetup)
+  string (TOLOWER "${GSW_NAMESPACE}" lowercase_namespace)
+  configure_file (
+    "${PROJECT_SOURCE_DIR}/${lowercase_namespace}-config.h.in"
+    "${PROJECT_BINARY_DIR}/config-h/${lowercase_namespace}-config.h")
+endfunction ()
+
 # Try to mimic the AX_COMPILER_FLAGS Autotools macro.
 #
 # For the rationale (having such a long list of flags instead of just relying on

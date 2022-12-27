@@ -4,11 +4,6 @@
 # - GSW_LIB_NAME: e.g., libfoo-3
 # - GSW_LIB_NAME_WITHOUT_LIB_PREFIX: e.g., foo-3
 # - GSW_NAMESPACE: e.g., Foo
-# - GSW_EXECUTABLE_SOURCES: list of source files, for simple executables.
-# - GSW_PKG_CONFIG_DEPS: the PREFIX used for a simple pkg_check_modules() call.
-# - GSW_PROJECT_DESCRIPTION: a short description.
-# - GSW_PKG_CONFIG_EXPOSED_DEPS_FOR_FILE: for creating a pkg-config file.
-# - GSW_PKG_CONFIG_PRIVATE_DEPS_FOR_FILE: for creating a pkg-config file.
 
 macro (GswInit)
   find_package (PkgConfig REQUIRED)

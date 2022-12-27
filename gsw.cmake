@@ -67,9 +67,12 @@ endfunction ()
 
 function (GswConfigFileStandardSetup)
   string (TOLOWER "${GSW_NAMESPACE}" lowercase_namespace)
+  set (output_dir "${PROJECT_BINARY_DIR}/config-h")
   configure_file (
     "${PROJECT_SOURCE_DIR}/${lowercase_namespace}-config.h.in"
-    "${PROJECT_BINARY_DIR}/config-h/${lowercase_namespace}-config.h")
+    "${output_dir}/${lowercase_namespace}-config.h")
+
+  set (GSW_DIRS_TO_INCLUDE ${GSW_DIRS_TO_INCLUDE} "${output_dir}" PARENT_SCOPE)
 endfunction ()
 
 function (GswGetAbsolutePaths files_list output_list)
@@ -127,6 +130,11 @@ function (GswGlibMkenumsPublic public_headers)
 
   set (GSW_GENERATED_PUBLIC_C_FILES
     ${GSW_GENERATED_PUBLIC_C_FILES} "${output_dir}/${output_c_file}"
+    PARENT_SCOPE)
+
+  set (GSW_DIRS_TO_INCLUDE ${GSW_DIRS_TO_INCLUDE}
+    "${output_dir}"
+    "${PROJECT_SOURCE_DIR}/${lowercase_namespace}" # for building enum-types.c
     PARENT_SCOPE)
 endfunction ()
 

@@ -184,6 +184,36 @@ function (GswFindGlibMkenumsProgram result)
   set (${result} "${my_result}" PARENT_SCOPE)
 endfunction ()
 
+function (GswAddGlibMkenumsCommandInternal glib_mkenums_executable
+  template output_dir output_filename absolute_paths_to_headers)
+  set (output "${output_dir}/${output_filename}")
+
+  add_custom_command (OUTPUT "${output}"
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E make_directory "${output_dir}"
+    COMMAND "${glib_mkenums_executable}"
+    ARGS --template "${template}" --output "${output}" ${absolute_paths_to_headers}
+    DEPENDS "${glib_mkenums_executable}" "${template}" ${absolute_paths_to_headers}
+    COMMENT "Generating ${output_filename}")
+endfunction ()
+
+function (GswAddGlibMkenumsCommand absolute_paths_to_public_headers)
+  GswFindGlibMkenumsProgram (glib_mkenums_executable)
+  string (TOLOWER "${GSW_NAMESPACE}" lowercase_namespace)
+  set (output_dir "${PROJECT_BINARY_DIR}/glib-mkenums/${lowercase_namespace}")
+
+  foreach (output_filename
+    "${lowercase_namespace}-enum-types.h"
+    "${lowercase_namespace}-enum-types.c")
+    set (template "${PROJECT_SOURCE_DIR}/${lowercase_namespace}/${output_filename}.in")
+    GswAddGlibMkenumsCommandInternal ("${glib_mkenums_executable}"
+      "${template}"
+      "${output_dir}"
+      "${output_filename}"
+      "${absolute_paths_to_public_headers}")
+  endforeach ()
+endfunction ()
+
 # Useful for printing a configuration summary.
 function (GswYesOrNo condition result)
   if (${condition})

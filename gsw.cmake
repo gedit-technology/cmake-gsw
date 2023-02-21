@@ -15,8 +15,9 @@ macro (GswInit)
 endmacro ()
 
 function (GswRegisterExposedDep name comparison_operator version)
-	# "For file" means: for creating the *.pc file.
-	# "For check" means: for pkg_check_modules().
+	# In the code below,
+	# "for file" means: for creating the *.pc file.
+	# "for check" means: for pkg_check_modules().
 
 	if ("${comparison_operator}" STREQUAL "")
 		set (base_for_file "${name}")

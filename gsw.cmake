@@ -1,4 +1,4 @@
-# "Gsw" as in "G swilmet" or "G software", as a namespace.
+# "Gsw" as in "GLib-based software", as a namespace.
 
 # Some Gsw variables:
 # - GSW_LIB_NAME: e.g., libfoo-3

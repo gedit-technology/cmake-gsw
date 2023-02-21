@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022-2023 - Sébastien Wilmet <swilmet@informatique-libre.be>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
 # "Gsw" as in "GLib-based software", as a namespace.
 
 # Some Gsw variables:
